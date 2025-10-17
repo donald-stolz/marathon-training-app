@@ -3,12 +3,13 @@ import { TrainingPlanHeader } from "@/components/training-plan-header";
 import { WeekCard } from "@/components/week-card";
 import { ProgressStats } from "@/components/progress-stats";
 import { Button } from "@/components/ui/button";
-import { LogOut } from "lucide-react";
+import { Lock, LogOut } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useTrainingPlan } from "@/hooks/useTrainingPlan";
+import Link from "next/link";
 
 export function TrainingPlan() {
-  const { signOut } = useAuth();
+  const { user, signOut } = useAuth();
   const {
     trainingPlan,
     totalWorkouts,
@@ -25,11 +26,19 @@ export function TrainingPlan() {
 
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex justify-end mb-4">
-          {/* TODO: Sign In Button */}
-          <Button variant="outline" size="sm" onClick={signOut}>
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign out
-          </Button>
+          {user ? (
+            <Button variant="outline" size="sm" onClick={signOut}>
+              <LogOut className="h-4 w-4 mr-1 mb-0.5" />
+              Sign out
+            </Button>
+          ) : (
+            <Link href="/auth/login">
+              <Button variant="outline" size="sm">
+                <Lock className="h-4 w-4 mr-1 mb-0.5" />
+                Sign in
+              </Button>
+            </Link>
+          )}
         </div>
 
         <ProgressStats
