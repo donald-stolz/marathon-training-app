@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import {
   Heebo as V0_Font_Heebo,
   Geist_Mono as V0_Font_Geist_Mono,
 } from "next/font/google";
+import SupabaseContextProvider from "@/context/SupabaseContext";
 
 // Initialize fonts
 const _heebo = V0_Font_Heebo({
@@ -31,8 +31,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`font-sans antialiased`}>
-        {children}
-        <Analytics />
+        <SupabaseContextProvider>
+          {children}
+          <Analytics />
+        </SupabaseContextProvider>
       </body>
     </html>
   );
