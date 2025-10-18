@@ -5,7 +5,6 @@ import { ProgressStats } from "@/components/progress-stats";
 import { useTrainingPlan } from "@/hooks/useTrainingPlan";
 import { PacingGuideCard } from "./pacing-guide-card";
 import { WorkoutSpecificsCard } from "./workout-specifics-card";
-import { AuthButtons } from "./auth-buttons";
 
 export function TrainingPlan() {
   const {

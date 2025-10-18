@@ -7,15 +7,20 @@ import {
 } from "@supabase/supabase-js";
 import { createContext, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
+import { FullPageLoader } from "@/components/ui/spinner";
 
 interface SupabaseContextProps {
   supabase: SupabaseClient | null;
   user: User | null;
+  loading: boolean;
+  error: string | null;
 }
 
 export const SupabaseContext = createContext<SupabaseContextProps>({
   supabase: null,
   user: null,
+  loading: true,
+  error: null,
 });
 
 export default function SupabaseContextProvider({
@@ -23,11 +28,15 @@ export default function SupabaseContextProvider({
 }: React.PropsWithChildren) {
   const supabase = createClient();
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
   const getUser = async () => {
     const {
       data: { user },
     } = await supabase.auth.getUser();
     setUser(user);
+    setLoading(false);
   };
 
   const handleAuthStateChange = async (
@@ -47,7 +56,8 @@ export default function SupabaseContextProvider({
   }, []);
 
   return (
-    <SupabaseContext.Provider value={{ supabase, user }}>
+    <SupabaseContext.Provider value={{ supabase, user, loading, error }}>
+      <FullPageLoader isLoading={loading} message="Loading user data..." />
       {children}
     </SupabaseContext.Provider>
   );

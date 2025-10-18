@@ -1,5 +1,5 @@
 import { SupabaseContext } from "@/context/SupabaseContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { trainingPlan } from "@/lib/training-data";
 
 export const useTrainingPlan = () => {
@@ -16,9 +16,26 @@ export const useTrainingPlan = () => {
     throw new Error("Supabase client not found");
   }
   const [completedWorkouts, setCompletedWorkouts] = useState<Set<string>>(
-    //   initialCompletedWorkouts
     new Set()
   );
+
+  const getCompletedWorkouts = async () => {
+    const { data, error } = await supabase
+      .from("workout_progress")
+      .select("workout_id")
+      .eq("user_id", user!.id);
+    if (error) {
+      console.error("Error fetching workout progress:", error);
+    } else {
+      setCompletedWorkouts(new Set(data.map((item) => item.workout_id)));
+    }
+  };
+
+  useEffect(() => {
+    if (user) {
+      getCompletedWorkouts();
+    }
+  }, [user, getCompletedWorkouts]);
 
   const toggleWorkout = async (workoutId: string) => {
     const isCompleted = completedWorkouts.has(workoutId);
