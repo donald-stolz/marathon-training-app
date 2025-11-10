@@ -19,7 +19,7 @@ const _geistMono = V0_Font_Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Marathon Training App",
-  description: "A training plan for marathon runners",
+  description: "Don's training plan for Austin Marathon 2026",
   generator: "v0.app",
   appleWebApp: {
     title: "Marathon",
