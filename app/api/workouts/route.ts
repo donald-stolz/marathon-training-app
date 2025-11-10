@@ -6,12 +6,12 @@ const getWorkouts = async (userId: string) => {
   const supabase = await createClient();
   const { data, error } = await supabase
     .from("workout_progress")
-    .select("workout_id")
+    .select("*")
     .eq("user_id", userId);
   if (error) {
     throw error;
   }
-  return data.map((workout) => workout.workout_id) as string[];
+  return data as Workout[];
 };
 
 const addWorkout = async (userId: string, workoutId: string) => {

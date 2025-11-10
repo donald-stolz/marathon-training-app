@@ -1,6 +1,6 @@
 import { SupabaseContext } from "@/context/SupabaseContext";
 import { useContext, useEffect, useState } from "react";
-import { trainingPlan } from "@/lib/training-data";
+import { trainingPlan, Workout } from "@/lib/training-data";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -27,20 +27,25 @@ export const useTrainingPlan = () => {
     );
   }
   const {
-    data = [],
+    data: completedWorkouts = [],
     error,
     isLoading,
     mutate,
   } = useSWR(`/api/workouts`, fetcher);
-  const completedWorkouts = new Set(data);
   const toggleWorkout = (workoutId: string) => {
-    const newCompletedWorkouts = new Set(completedWorkouts);
-    if (completedWorkouts.has(workoutId)) {
+    let newCompletedWorkouts = completedWorkouts;
+    if (
+      completedWorkouts.some(
+        (completed: Workout) => completed.workout_id === workoutId
+      )
+    ) {
       removeWorkout(workoutId);
-      newCompletedWorkouts.delete(workoutId);
+      newCompletedWorkouts = newCompletedWorkouts.filter(
+        (completed: Workout) => completed.workout_id !== workoutId
+      );
     } else {
       addWorkout(workoutId);
-      newCompletedWorkouts.add(workoutId);
+      newCompletedWorkouts.push({ workout_id: workoutId } as Workout);
     }
     mutate(newCompletedWorkouts, {
       optimisticData: newCompletedWorkouts,
@@ -52,10 +57,9 @@ export const useTrainingPlan = () => {
     0
   );
   const totalWeeks = trainingPlan.length;
-  const completedCount = completedWorkouts.size;
+  const completedCount = completedWorkouts.length;
   const progressPercentage = Math.round((completedCount / totalWorkouts) * 100);
 
-  console.log(completedWorkouts);
   return {
     completedWorkouts,
     trainingPlan,

@@ -1,14 +1,14 @@
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import type { Week } from "@/lib/training-data";
+import type { Week, WorkoutResult } from "@/lib/training-data";
 import { Button } from "./ui/button";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface WeekCardProps {
   week: Week;
-  completedWorkouts: Set<string>;
+  completedWorkouts: WorkoutResult[];
   onToggleWorkout: (workoutId: string) => void;
 }
 
@@ -17,11 +17,29 @@ export function WeekCard({
   completedWorkouts,
   onToggleWorkout,
 }: WeekCardProps) {
+  const [isOpen, setIsOpen] = useState(true);
+  useEffect(() => {
+    const firstWorkout = completedWorkouts.sort(
+      (a, b) =>
+        new Date(a.completed_at).getTime() - new Date(b.completed_at).getTime()
+    )[0];
+    if (firstWorkout) {
+      console.log(firstWorkout);
+      const currentWeek =
+        Math.round(
+          (new Date().getTime() -
+            new Date(firstWorkout.completed_at).getTime()) /
+            (1000 * 60 * 60 * 24 * 7)
+        ) + 1;
+      console.log(currentWeek);
+      setIsOpen(currentWeek === week.week);
+    }
+  }, [completedWorkouts]);
+
   const completedInWeek = week.workouts.filter((w) =>
-    completedWorkouts.has(`${week.week}-${w.day}`)
+    completedWorkouts.some((completed) => completed.workout_id === w.workout_id)
   ).length;
   const isWeekComplete = completedInWeek === week.workouts.length;
-  const [isOpen, setIsOpen] = useState(!isWeekComplete);
 
   const toggleOpen = () => {
     setIsOpen((open) => !open);
@@ -62,11 +80,13 @@ export function WeekCard({
           <div className="space-y-3">
             {week.workouts.map((workout) => {
               const workoutId = workout.workout_id;
-              const isCompleted = completedWorkouts.has(workoutId);
+              const isCompleted = completedWorkouts.some(
+                (completed) => completed.workout_id === workout.workout_id
+              );
 
               return (
                 <div
-                  key={workout.day}
+                  key={workoutId}
                   className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors"
                 >
                   <Checkbox

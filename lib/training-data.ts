@@ -11,6 +11,14 @@ export interface Week {
   workouts: Workout[];
 }
 
+export type WorkoutResult = {
+  id: string;
+  workout_id: string;
+  user_id: string;
+  created_at: string;
+  completed_at: string;
+};
+
 export const trainingPlan: Week[] = [
   {
     week: 1,
