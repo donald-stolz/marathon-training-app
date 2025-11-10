@@ -21,6 +21,17 @@ export const metadata: Metadata = {
   title: "Marathon Training App",
   description: "A training plan for marathon runners",
   generator: "v0.app",
+  appleWebApp: {
+    title: "Marathon",
+  },
+  icons: {
+    icon: [
+      { url: "/favicon/favicon.ico", sizes: "any" },
+      { url: "/favicon/icon0.svg", type: "image/svg+xml" },
+    ],
+    apple: "/favicon/apple-icon.png",
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({
@@ -30,7 +41,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <link rel="icon" href="/favicon.png" sizes="any" />
       <body className={`font-sans antialiased`}>
         <SupabaseContextProvider>
           {children}
