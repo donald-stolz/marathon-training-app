@@ -61,7 +61,7 @@ export function WeekCard({
         {isOpen && (
           <div className="space-y-3">
             {week.workouts.map((workout) => {
-              const workoutId = `${week.week}-${workout.day}`;
+              const workoutId = workout.workout_id;
               const isCompleted = completedWorkouts.has(workoutId);
 
               return (
